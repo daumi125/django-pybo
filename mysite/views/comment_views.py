@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.utils import timezone
 
 from ..forms import CommentForm
@@ -18,7 +18,7 @@ def comment_create_question(reqeust, question_id):
             comment.create_date = timezone.now()
             comment.question = question
             comment.save()
-            return redirect('mysite:detail', question_id=question.id)
+            return redirect('{}#comment_{}'.format(resolve_url('mysite:detail', question_id=comment.question.id), comment.id))
     else:
         form = CommentForm()
     context = {'form': form}
@@ -39,7 +39,7 @@ def comment_modify_question(request, comment_id):
             comment.author = request.user
             comment.modify_date = timezone.now()
             comment.save()
-            return redirect('mysite:detail', question_id=comment.question.id)
+            return redirect('{}#comment_{}'.format(resolve_url('mysite:detail', question_id=comment.question.id), comment.id))
     else:
         form = CommentForm(instance=comment)  # 기존내용 보여주기
     context = {'form': form}
@@ -70,7 +70,7 @@ def comment_create_answer(request, answer_id):
             comment.create_date = timezone.now()
             comment.answer = answer
             comment.save()
-            return redirect('mysite:detail', question_id=comment.answer.question.id)  # form안에 comment 기준
+            return redirect('{}#comment_{}'.format(resolve_url('mysite:detail', question_id=comment.answer.question.id), comment.id))  # form안에 comment 기준
     else:
         form = CommentForm()
     context = {'form': form}
@@ -91,7 +91,7 @@ def comment_modify_answer(request, comment_id):
             comment.author = request.user
             comment.modify_date = timezone.now()
             comment.save()
-            return redirect('mysite:detail', question_id=comment.answer.question.id)  # answer값에 저장하니까 => answer통해서 question접근
+            return redirect('{}#comment_{}'.format(resolve_url('mysite:detail', question_id=comment.answer.question.id), comment.id))  # answer값에 저장하니까 => answer통해서 question접근
 
     else:
         form = CommentForm(instance=comment)

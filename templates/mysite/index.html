@@ -18,7 +18,11 @@
                     <tr class="text-center">
                         <td>{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}</td>
                         <td>
-{#                            {%  %}#}
+                            {% if question.voter.all.count > 0 %}
+                                <span class="badge bg-warning px-2 py-1">
+                                    {{ question.voter.all.count }}
+                                </span>
+                            {% endif %}
                         </td>
                         <td class="text-start">
                             <a href="{% url 'mysite:detail' question.id %}">{{ question.subject }}</a>
